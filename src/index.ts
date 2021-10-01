@@ -1,4 +1,8 @@
-import {ApplicationConfig, MicroserviceNodeCatalogApplication} from './application';
+import {
+  ApplicationConfig,
+  MicroserviceNodeCatalogApplication,
+} from './application';
+import './bootstrap';
 
 export * from './application';
 
