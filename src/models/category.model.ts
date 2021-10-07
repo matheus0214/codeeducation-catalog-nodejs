@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import {Entity, model, property} from '@loopback/repository';
 
 @model({settings: {strict: false}})
@@ -17,15 +18,28 @@ export class Category extends Entity {
   name: string;
 
   @property({
-    type: 'string',
+    type: 'boolean',
+    required: false,
   })
-  description?: string;
+  is_active = true;
+
+  @property({
+    type: 'date',
+    required: true,
+  })
+  created_at: Date;
+
+  @property({
+    type: 'date',
+    required: true,
+  })
+  updated_at: Date;
 
   // Define well-known properties here
 
   // Indexer property to allow additional data
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [prop: string]: any;
+  // [prop: string]: any;
 
   constructor(data?: Partial<Category>) {
     super(data);

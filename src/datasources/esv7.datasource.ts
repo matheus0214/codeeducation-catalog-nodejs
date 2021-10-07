@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import {inject, lifeCycleObserver, LifeCycleObserver} from '@loopback/core';
 import {juggler} from '@loopback/repository';
 
@@ -13,7 +14,32 @@ const config = {
   },
   version: 7,
   defaultSize: '50',
-  mappingProperties: {},
+  mappingProperties: {
+    docType: {
+      type: 'keyword',
+    },
+    id: {
+      type: 'keyword',
+    },
+    name: {
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          ignore_above: 256,
+        },
+      },
+    },
+    is_active: {
+      type: 'boolean',
+    },
+    created_at: {
+      type: 'date',
+    },
+    updated_at: {
+      type: 'date',
+    },
+  },
 };
 
 // Observe application's life cycle to disconnect the datasource when
