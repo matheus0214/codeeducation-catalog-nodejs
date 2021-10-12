@@ -1,32 +1,34 @@
-import { BootMixin } from "@loopback/boot";
-import { ApplicationConfig } from "@loopback/core";
-import { RepositoryMixin } from "@loopback/repository";
-import { RestApplication } from "@loopback/rest";
-import {
-  RestExplorerBindings,
-  RestExplorerComponent,
-} from "@loopback/rest-explorer";
-import { ServiceMixin } from "@loopback/service-proxy";
-import path from "path";
-import { MySequence } from "./sequence";
+import {BootMixin} from '@loopback/boot';
+import {Application, ApplicationConfig} from '@loopback/core';
+import {RepositoryMixin} from '@loopback/repository';
+import {RestComponent, RestServer} from '@loopback/rest';
+import {RestExplorerBindings} from '@loopback/rest-explorer';
+import {ServiceMixin} from '@loopback/service-proxy';
+import path from 'path';
+import {RestExplorerComponent} from './components';
+import {MySequence} from './sequence';
+import {RabbitmqServer} from './servers';
 
-export { ApplicationConfig };
+export {ApplicationConfig};
 
 export class MicroserviceNodeCatalogApplication extends BootMixin(
-  ServiceMixin(RepositoryMixin(RestApplication))
+  ServiceMixin(RepositoryMixin(Application)),
 ) {
   constructor(options: ApplicationConfig = {}) {
     super(options);
 
+    this.component(RestComponent);
+
+    const restServer = this.getSync<RestServer>('servers.RestServer');
     // Set up the custom sequence
-    this.sequence(MySequence);
+    restServer.sequence(MySequence);
 
     // Set up default home page
-    this.static("/", path.join(__dirname, "../public"));
+    restServer.static('/', path.join(__dirname, '../public'));
 
     // Customize @loopback/rest-explorer configuration here
     this.configure(RestExplorerBindings.COMPONENT).to({
-      path: "/explorer",
+      path: '/explorer',
     });
     this.component(RestExplorerComponent);
 
@@ -35,10 +37,12 @@ export class MicroserviceNodeCatalogApplication extends BootMixin(
     this.bootOptions = {
       controllers: {
         // Customize ControllerBooter Conventions here
-        dirs: ["controllers"],
-        extensions: [".controller.js"],
+        dirs: ['controllers'],
+        extensions: ['.controller.js'],
         nested: true,
       },
     };
+
+    this.servers([RabbitmqServer]);
   }
 }
